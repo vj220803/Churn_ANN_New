@@ -1,5 +1,3 @@
-
-
 ```markdown
 # 📊 Customer Churn Prediction with Deep Learning (ANN)
 
@@ -13,13 +11,13 @@ The app is deployed with **Streamlit**, where users can input customer details a
 ```
 
 Churn\_ANN/
-│── Churn\_Modeling.ipynb    # Google Colab training notebook
-│── churn\_model.keras       # Trained ANN model
-│── scaler.pkl              # StandardScaler for numeric features
-│── app.py                  # Streamlit app for deployment
-│── requirements.txt        # Dependencies
-│── Churn\_Modelling.csv     # Original dataset
-│── README.md               # Project documentation
+1. │── Churn\_Modeling.ipynb    # Google Colab training notebook
+2. │── churn\_model.keras       # Trained ANN model
+3. │── scaler.pkl              # StandardScaler for numeric features
+4. │── app.py                  # Streamlit app for deployment
+5. │── requirements.txt        # Dependencies
+6. │── Churn\_Modelling.csv     # Original dataset
+7. │── README.md               # Project documentation
 
 ```
 
@@ -94,7 +92,7 @@ The Streamlit app takes user input (credit score, age, balance, etc.), preproces
 1. Clone this repo:
 
    ```bash
-   git clone https://github.com/yourusername/Churn_ANN.git
+   git clone https://github.com/vj220803/Churn_ANN.git
    cd Churn_ANN
    ```
 

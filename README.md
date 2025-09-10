@@ -1,126 +1,186 @@
-# 📊 Customer Churn Prediction using ANN
 
-This project predicts **customer churn** (whether a customer will leave the bank) using an **Artificial Neural Network (ANN)** built with TensorFlow/Keras. The model is deployed with **Streamlit** for an interactive web app.  
 
----
+```markdown
+# 📊 Customer Churn Prediction with Deep Learning (ANN)
 
-## 📂 Project Structure
-
-Churn_ANN/
-│── app.py # Streamlit app
-│── churn_model.keras # Trained ANN model
-│── scaler.pkl # StandardScaler used during training
-│── Churn_Modeling.ipynb # Google Colab notebook (model training)
-│── requirements.txt # Python dependencies
-│── Churn_Modelling.csv # Dataset (Kaggle bank churn dataset)
-│── README.md # Project documentation
-
+This project implements a **Customer Churn Prediction model** using an **Artificial Neural Network (ANN)** in TensorFlow/Keras.  
+The app is deployed with **Streamlit**, where users can input customer details and predict whether a customer is likely to churn.
 
 ---
 
-## ⚙️ Tech Stack
+## 🚀 Project Structure
 
-- **Python 3.8+**
-- **TensorFlow / Keras** → ANN model  
-- **Scikit-learn** → Data preprocessing (scaling, encoding)  
-- **Streamlit** → Web app deployment  
-- **NumPy & Pandas** → Data handling  
-- **Matplotlib & Seaborn** → Visualization (EDA in notebook)  
+```
 
----
+Churn\_ANN/
+│── Churn\_Modeling.ipynb    # Google Colab training notebook
+│── churn\_model.keras       # Trained ANN model
+│── scaler.pkl              # StandardScaler for numeric features
+│── app.py                  # Streamlit app for deployment
+│── requirements.txt        # Dependencies
+│── Churn\_Modelling.csv     # Original dataset
+│── README.md               # Project documentation
 
-## 📑 Dataset
-
-The dataset used is the **Churn Modelling Dataset** (commonly available on Kaggle).  
-
-### Features:
-- **CreditScore** – Numerical credit score of customer  
-- **Geography** – Country (France, Germany, Spain)  
-- **Gender** – Male/Female  
-- **Age** – Customer age  
-- **Tenure** – Number of years with the bank  
-- **Balance** – Account balance  
-- **NumOfProducts** – Number of bank products held  
-- **HasCrCard** – Has credit card (0/1)  
-- **IsActiveMember** – Active membership status (0/1)  
-- **EstimatedSalary** – Customer salary  
-
-### Target:
-- **Exited** → `1 = Churn` , `0 = Not Churn`  
-
-### Dropped Columns:
-- `RowNumber`, `CustomerId`, `Surname` → identifiers, not useful for training.  
+```
 
 ---
 
-## 🧠 Model Training
+## 📂 Dataset
+
+We use the **Churn_Modelling.csv** dataset, which contains 10,000 customers' information including demographics, account details, and churn status (`Exited`).  
+
+During preprocessing:
+- Removed: `RowNumber`, `CustomerId`, `Surname`, `Exited`
+- Encoded: `Gender` (binary) and `Geography` (one-hot)
+- Scaled: Only **8 numeric features**
+
+---
+
+## 🧠 Model Training (Notebook)
+
+The model was trained in **Google Colab** with the following pipeline:
 
 1. **Data Preprocessing**  
-   - Encoded categorical variables:  
-     - Gender → Binary (Male=1, Female=0)  
-     - Geography → One-hot (France, Germany, Spain)  
-   - Standardized numerical features using `StandardScaler`.  
+   - Dropped unnecessary columns  
+   - One-hot encoded categorical variables  
+   - Standardized numeric features  
 
-2. **Artificial Neural Network (ANN)**  
-   - Input layer: 12 features  
-   - Hidden Layers: Dense layers with ReLU activation  
-   - Output Layer: Sigmoid activation (binary classification)  
+2. **Feature Order Used in Training**  
 
-3. **Compilation**  
-   - Optimizer: `adam`  
-   - Loss: `binary_crossentropy`  
-   - Metric: `accuracy`  
+The `StandardScaler` was trained **only on these 8 numeric features in this exact order**:
+```
 
-4. **Saving Model & Scaler**  
+\['CreditScore', 'Age', 'Tenure', 'Balance',
+'NumOfProducts', 'HasCrCard', 'IsActiveMember', 'EstimatedSalary']
+
+````
+
+⚠️ **Important**: Any prediction must follow this same order, otherwise the scaler will raise an error.
+
+3. **Model Architecture**  
+   - Input layer: 11 neurons  
+   - Hidden layers: 2 dense layers (ReLU activation)  
+   - Output layer: 1 neuron (Sigmoid activation for churn probability)  
+   - Optimizer: Adam  
+   - Loss: Binary Crossentropy  
+
+4. **Saving Artifacts**  
    ```python
    import joblib
-   # Save scaler
-   joblib.dump(sc, "scaler.pkl")
+   joblib.dump(sc, "scaler.pkl")         # Save scaler
+   classifier.save("churn_model.keras")  # Save ANN model
+````
 
-   # Save trained ANN model
-   classifier.save("churn_model.keras")
+---
+
+## 🌐 Streamlit App (`app.py`)
+
+The Streamlit app takes user input (credit score, age, balance, etc.), preprocesses it in the **same way as training**, and makes churn predictions.
+
+### Preprocessing in App:
+
+* **Scale only the 8 numeric features** using `scaler.pkl`
+* **Append categorical encodings** (`Gender`, `Geography`)
+* Final input vector = 12 features:
+
+  ```
+  [Scaled numeric (8)] + [Gender (1)] + [Geography one-hot (3)]
+  ```
+
+---
+
+## ⚙️ Installation & Setup
+
+1. Clone this repo:
+
+   ```bash
+   git clone https://github.com/yourusername/Churn_ANN.git
+   cd Churn_ANN
+   ```
+
+2. Create virtual environment (recommended):
+
+   ```bash
+   python -m venv venv
+   source venv/bin/activate   # Linux/Mac
+   venv\Scripts\activate      # Windows
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Run the Streamlit app:
+
+   ```bash
+   streamlit run app.py
+   ```
+
+---
+
+## ☁️ Deployment (Streamlit Cloud)
+
+1. Push this project to GitHub.
+
+2. Go to [Streamlit Cloud](https://streamlit.io/cloud) → "New app".
+
+3. Connect your GitHub repo, select `app.py`.
+
+4. Add dependencies in `requirements.txt`.
+   Example:
+
+   ```
+   streamlit
+   numpy
+   tensorflow
+   scikit-learn
+   joblib
+   ```
+
+5. Deploy 🚀
+
+---
+
+## 📊 Example Prediction
+
+* Input:
+
+  ```
+  CreditScore = 600
+  Gender = Male
+  Age = 40
+  Tenure = 3
+  Balance = 60000
+  NumOfProducts = 2
+  HasCrCard = 1
+  IsActiveMember = 1
+  EstimatedSalary = 50000
+  Geography = France
+  ```
+
+* Output:
+
+  ```
+  ✅ This customer is not likely to churn. (Probability: 0.23)
+  ```
+
+---
+
+## 📌 Notes
+
+* Always ensure **feature order** matches the training pipeline.
+* If you retrain the model, re-save both `churn_model.keras` and `scaler.pkl`.
+* For reproducibility, use the same preprocessing pipeline as in the notebook.
+
+---
+
+## ✨ Author
+
+Developed by **Vijayan Naidu** 👨‍💻
+M.Sc. Data Science | Fergusson College
+
+---
 
 
-## Running the Streamlit App
-1️⃣ Install dependencies
-Make sure you are in the project folder and run:
-pip install -r requirements.txt
-
-2️⃣ Run the app
-streamlit run app.py
-
-3️⃣ Use the app
-Fill in customer details (Credit Score, Age, Geography, Gender, Balance, etc.)
-The app will preprocess the input (scaling + encoding).
-The ANN model will predict Churn Probability.
-
-✅ Not likely to churn ⚠️ Likely to churn
-
-🌐 Deployment on Streamlit Cloud
-Push your project folder to GitHub (include all required files).
-
-Go to Streamlit Cloud.
-
-Sign in with GitHub and select your repository.
-
-Deploy 🚀
-
-✅ Ensure that your repo has at least:
-
-app.py
-
-requirements.txt
-
-churn_model.keras
-
-scaler.pkl
-
-## Future Enhancements
-1. Add SHAP/LIME for interpretability of churn predictions
-2. Support additional countries and datasets
-3. Build an API for integration with real banking systems
-4. Deploy on Docker + AWS/GCP for production use
-
-## 👩‍💻 Author
-Vijayan Naidu
-M.Sc. Data Science | Fergusson College, Pune

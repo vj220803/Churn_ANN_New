@@ -3,9 +3,7 @@ import numpy as np
 import joblib
 import tensorflow as tf
 
-# ---------------------------
 # Load trained model and scaler
-# ---------------------------
 model = tf.keras.models.load_model("churn_model.keras")
 scaler = joblib.load("scaler.pkl")
 
@@ -42,39 +40,34 @@ geography_map = {
 }
 
 # ---------------------------
-# Create input array (12 features)
+# Prepare numeric input (exact order of training)
 # ---------------------------
-# Training features after dropping RowNumber, CustomerId, Surname, Exited:
-# [CreditScore, Gender, Age, Tenure, Balance, NumOfProducts, HasCrCard, 
-#  IsActiveMember, EstimatedSalary, Geography_France, Geography_Germany, Geography_Spain]
-
-input_data = [
+numeric_values = [
     credit_score,
-    gender_map[gender],
     age,
     tenure,
     balance,
     num_products,
     has_cr_card,
     is_active_member,
-    estimated_salary,
-    *geography_map[geography]  # adds 3 columns
+    estimated_salary
 ]
 
-# ---------------------------
-# Scale input
-# ---------------------------
-try:
-    input_scaled = scaler.transform([input_data])
-except Exception as e:
-    st.error(f"⚠️ Input scaling failed: {e}")
-    st.stop()
+# Scale ONLY numeric values
+numeric_scaled = scaler.transform([numeric_values])[0]
+
+# Combine final input: scaled numeric + gender + geography
+final_input = np.concatenate([
+    numeric_scaled,
+    [gender_map[gender]],
+    geography_map[geography]
+])
 
 # ---------------------------
 # Prediction
 # ---------------------------
 if st.button("Predict Churn"):
-    prediction = model.predict(input_scaled)[0][0]
+    prediction = model.predict(final_input.reshape(1, -1))[0][0]
     if prediction > 0.5:
         st.error(f"⚠️ This customer is likely to churn. (Probability: {prediction:.2f})")
     else:

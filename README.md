@@ -3,7 +3,7 @@
 
 This project implements a **Customer Churn Prediction model** using an **Artificial Neural Network (ANN)** in TensorFlow/Keras.  
 The app is deployed with **Streamlit**, where users can input customer details and predict whether a customer is likely to churn.
-
+URL: https://churnannnew-o9s6blxa2x2mi74pmtpztt.streamlit.app/
 ---
 
 ## 🚀 Project Structure
